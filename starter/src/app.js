@@ -23,23 +23,34 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
  };
 
  const mapOptions = {
-   "tilt": 0,
+   "tilt": 45,
    "heading": 0,
    "zoom": 18,
    "center": { lat: 40.78017131152 , lng: -73.9681065889423  },
    "mapId": "3f6e370fa4da464e"
  }
 
- async function initMap() {
+ async function initMap(items) {
+  var item = items[items.length - 1]
+
    const mapDiv = document.getElementById("map");
 
    const apiLoader = new Loader(apiOptions);
    await apiLoader.load();
 
+   mapOptions.center.lat = Number(item.Latitude)
+   mapOptions.center.lng = Number(item.Longitude)
+
    return new google.maps.Map(mapDiv, mapOptions);
  }
 
- async function initWebGLOverlayView (map) {
+ async function initWebGLOverlayView (map, items) {
+    var item = items[items.length - 1]
+    var height = Number(item["Vertical accuracy"]);
+    var width = Number(item["Horizontal accuracy"]);
+
+
+
     let scene, renderer, camera, loader;
     const webGLOverlayView = new google.maps.WebGLOverlayView();
 
@@ -54,20 +65,26 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
         directionalLight.position.set(0.5, -1, 0.5);
         scene.add(directionalLight);
 
-        const geometry = new THREE.SphereGeometry( 80, 10, 32 );
-        const material = new THREE.MeshBasicMaterial( { color:0x79bcee, transparent: true, opacity: 0.7 } );
-        const sphere = new THREE.Mesh( geometry, material );
-        scene.add( sphere );
+        const geometry = new THREE.CylinderGeometry( width, width, height, 32 );
+        const material = new THREE.MeshBasicMaterial( {color: "light-blue", "transparent":true, "opacity": 0.8} );
+        const cylinder = new THREE.Mesh( geometry, material );
+        cylinder.rotateX(70 * Math.PI/180)
+        scene.add( cylinder );
 
-        
+        var geometry_edges = new THREE.EdgesGeometry( cylinder.geometry );
+        var material_edges = new THREE.LineBasicMaterial( { color: 0x00000 } );
+        var wireframe = new THREE.LineSegments( geometry_edges, material_edges );
+        wireframe.rotateX(70 * Math.PI/180)
+        scene.add( wireframe );
+
   
         loader = new GLTFLoader();
         const source = "./swim.glb";
         loader.load(
           source,
           gltf => {
-            gltf.scene.scale.set(2500,2500,2500);
-            gltf.scene.rotation.x = 75 * Math.PI/180;
+            gltf.scene.scale.set(250,250,250);
+            gltf.scene.rotation.x = 180 * Math.PI/180;
             scene.add(gltf.scene);
           }
         );
@@ -107,7 +124,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
         const latLngAltitudeLiteral = {
           lat: mapOptions.center.lat,
           lng: mapOptions.center.lng,
-          altitude: 100
+          altitude: Number(item.Altitude)
         }
   
         const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
@@ -122,10 +139,21 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
     webGLOverlayView.setMap(map);
   }
 
-  (async () => {
-    const map = await initMap();
-    initWebGLOverlayView(map);
-  })();
+  async function main(){
+    var json = require('./localization.json'); 
+    var value_to_pass = json.dev5;
+
+    (async () => {
+      const map = await initMap(value_to_pass);
+      initWebGLOverlayView(map, value_to_pass);
+    })();
+  }
+
+  main();
+
+  
+
+
 
 
 

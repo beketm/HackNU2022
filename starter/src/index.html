@@ -23,13 +23,28 @@ limitations under the License.
   <link href="styles.css" rel="stylesheet">
   <link rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Roboto">
+
 </head>
 
 <body>
+  <div>
+    <select id="test" name="choice">
+      <option value="dev1">dev1 (Tokyo, Japan)</option>
+      <option value="dev2" selected>dev2 (NYC, USA)</option>
+      <option value="dev3">dev3 (London, UK)</option>
+      <option value="dev4">dev4 (NYC, USA)</option>
+      <option value="dev5">dev5 (London, UK)</option>
+      <option value="dev6">dev6 (NYC, USA)</option>
+      <option value="dev7">dev7 (Amsterdam, Netherlands)</option>
+      <option value="dev8">dev8 (London, UK)</option>
+      <option value="dev9">dev9 (San-Francisco, USA)</option>
+      <option value="dev10">dev10 (Everest, Nepal)</option>
+    </select>
+  </div>
   <div class="container">
     <div id="map"></div>
     <div id="box"><h2 id="label"></h2></div>
   </div>
+  <script src="app.js"></script>
 </body>
-<script src="app.js"></script>
 </html>

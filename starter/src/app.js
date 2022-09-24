@@ -160,15 +160,21 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
     webGLOverlayView.setMap(map);
   }
 
-  async function main(){
+  async function main(test_val="dev4"){
     var json = require('./localization.json'); 
-    var value_to_pass = json["dev7"];
+    var value_to_pass = json[test_val];
 
     (async () => {
       const map = await initMap(value_to_pass);
       initWebGLOverlayView(map, value_to_pass);
     })();
   }
+
+  document.getElementById("test").addEventListener("change", ()=>{
+    let test_val = document.getElementById("test").value
+    main(test_val);
+    console.log(test_val);
+  });
 
   main();
 

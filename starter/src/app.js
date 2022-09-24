@@ -66,7 +66,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
         scene.add(directionalLight);
 
         const geometry = new THREE.CylinderGeometry( width, width, height, 32 );
-        const material = new THREE.MeshBasicMaterial( {color: "light-blue", "transparent":true, "opacity": 0.8} );
+        const material = new THREE.MeshBasicMaterial( {color: 0xADD8E6, "transparent":true, "opacity": 0.8} );
         const cylinder = new THREE.Mesh( geometry, material );
         cylinder.rotateX(70 * Math.PI/180)
         scene.add( cylinder );

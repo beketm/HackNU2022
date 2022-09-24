@@ -30,8 +30,19 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
    "mapId": "3f6e370fa4da464e"
  }
 
+ const activities = {"walking":"./img/walk.glb",
+                    "cycling" : "./img/cycle.glb",
+                    "swimming": "./img/swim.glb",
+                    "running" : "./img/run.glb",
+                    "driving" : "./img/drive.glb",
+                    "unknown" : "./img/stand.glb"}
+
+ function isEmpty(val){
+  return !val || val ==="null";
+ }
+
  async function initMap(items) {
-  var item = items[items.length - 1]
+  var item = items[0]
 
    const mapDiv = document.getElementById("map");
 
@@ -45,11 +56,20 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
  }
 
  async function initWebGLOverlayView (map, items) {
-    var item = items[items.length - 1]
+    var item = items[0]
     var height = Number(item["Vertical accuracy"]);
     var width = Number(item["Horizontal accuracy"]);
-
-
+   
+   console.log(items);
+    console.log(item.Identifier , item['Floor label'])
+    const text_div = document.getElementById("box");
+    text_div.style.display = "none"; 
+    if (!isEmpty(item.Identifier)  || !isEmpty(item['Floor label'])){
+      text_div.style.display = "block"; 
+      const text_element = document.getElementById("label")
+      text_element.innerHTML = (item.Identifier !== "null" ? `Name: ${item.Identifier}` : "") +String.fromCharCode(13)+ (item['Floor label']!=="null" ? `\r\nFloor: ${item['Floor label']}` : "");
+    }
+    
 
     let scene, renderer, camera, loader;
     const webGLOverlayView = new google.maps.WebGLOverlayView();
@@ -68,22 +88,23 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
         const geometry = new THREE.CylinderGeometry( width, width, height, 32 );
         const material = new THREE.MeshBasicMaterial( {color: 0xADD8E6, "transparent":true, "opacity": 0.8} );
         const cylinder = new THREE.Mesh( geometry, material );
-        cylinder.rotateX(70 * Math.PI/180)
+        cylinder.rotateX(90 * Math.PI/180)
         scene.add( cylinder );
 
         var geometry_edges = new THREE.EdgesGeometry( cylinder.geometry );
         var material_edges = new THREE.LineBasicMaterial( { color: 0x00000 } );
         var wireframe = new THREE.LineSegments( geometry_edges, material_edges );
-        wireframe.rotateX(70 * Math.PI/180)
+        wireframe.rotateX(270 * Math.PI/180)
         scene.add( wireframe );
 
   
         loader = new GLTFLoader();
-        const source = "./swim.glb";
+        const source = activities[item["Activity"].trim().toLowerCase()];
+        console.log(source);
         loader.load(
           source,
           gltf => {
-            gltf.scene.scale.set(250,250,250);
+            gltf.scene.scale.set(170,170,170);
             gltf.scene.rotation.x = 180 * Math.PI/180;
             scene.add(gltf.scene);
           }
@@ -141,7 +162,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 
   async function main(){
     var json = require('./localization.json'); 
-    var value_to_pass = json.dev5;
+    var value_to_pass = json["dev7"];
 
     (async () => {
       const map = await initMap(value_to_pass);

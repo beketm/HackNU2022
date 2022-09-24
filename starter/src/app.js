@@ -69,6 +69,25 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
       const text_element = document.getElementById("label")
       text_element.innerHTML = (item.Identifier !== "null" ? `Name: ${item.Identifier}` : "") +String.fromCharCode(13)+ (item['Floor label']!=="null" ? `\r\nFloor: ${item['Floor label']}` : "");
     }
+
+    let flightPlanCoordinates = []
+    if (items.length > 1){
+      for(let i = 0; i < items.length; i++){
+        flightPlanCoordinates.push({ lat: Number(items[i].Latitude),lng: Number(items[i].Longitude)});
+      }
+
+      const flightPath = new google.maps.Polyline({
+        path: flightPlanCoordinates,
+        geodesic: true,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 4,
+      });
+    
+      flightPath.setMap(map);
+
+      console.log(flightPlanCoordinates);
+    }
     
 
     let scene, renderer, camera, loader;

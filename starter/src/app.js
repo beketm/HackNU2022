@@ -116,6 +116,27 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
         wireframe.rotateX(270 * Math.PI/180)
         scene.add( wireframe );
 
+        const material_path = new THREE.LineBasicMaterial( { color: 0x00000 , linewidth: 10,} );
+        const points = [];
+        // points.push( new THREE.Vector3( - 10, 0, 0 ) );
+        console.log(items.length);
+        console.log(mapOptions.center);
+        const multiplier = -90250;
+        if (items.length > 1){
+          for(let i=0; i < items.length; i++){
+            console.log(Number(items[i].Latitude), Number(items[i].Longitude), Number(items[i].Altitude));
+            points.push(new THREE.Vector3(multiplier*(mapOptions.center.lng - Number(items[i].Longitude)) - 10,
+                                          multiplier*(mapOptions.center.lat - Number(items[i].Latitude)) - 20,
+                                          Number(items[i].Altitude)));
+          }
+          const geometry_path = new THREE.BufferGeometry().setFromPoints( points );
+          const line = new THREE.Line( geometry_path, material_path );
+          scene.add( line );
+          console.log(points)
+        }
+
+        
+
   
         loader = new GLTFLoader();
         const source = activities[item["Activity"].trim().toLowerCase()];
